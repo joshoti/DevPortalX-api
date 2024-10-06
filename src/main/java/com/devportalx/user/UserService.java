@@ -23,7 +23,7 @@ public class UserService {
 
     /**
      * Checks if email is already present in the db and creates user or fails.
-     * @param newUser
+     * @param newUser map containing keys "email" and "password"
      * @return JSON message indicating success or failure with the corresponding status code
      * @throws NoSuchAlgorithmException 
      */
