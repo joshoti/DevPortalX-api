@@ -1,6 +1,7 @@
 package com.devportalx.user;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
+/**
+ * UserController is the Controller layer for the user package, which is
+ * responsible for routing requests. It is injected into the Controller layer.
+ */
 @RestController
 @RequestMapping(path = "api/users")
 public class UserController {
@@ -27,22 +31,22 @@ public class UserController {
     public User getUserByGuid(@PathVariable(name = "userGuid") UUID userGuid) {
         return userService.getUserByGuid(userGuid);
     }
-    
+
     @GetMapping
-    public void getAllUsers() {
-        userService.getAllUser();
+    public List<User> getAllUsers() {
+        return userService.getAllUser();
     }
 
     @PostMapping(path = "register")
     public ResponseEntity<Map<String, String>> createUser(@RequestBody Map<String, String> newUser)
-        throws NoSuchAlgorithmException {
+            throws NoSuchAlgorithmException {
         return userService.createUser(newUser);
     }
-    
+
     @PostMapping(path = "login")
     public User login(@RequestBody Map<String, String> loginData)
-        throws NoSuchAlgorithmException {
+            throws NoSuchAlgorithmException {
         return userService.login(loginData);
     }
-    
+
 }

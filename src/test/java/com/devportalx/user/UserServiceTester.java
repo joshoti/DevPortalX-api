@@ -60,29 +60,28 @@ public class UserServiceTester {
 
     @Test
     public void testCreateUser() throws NoSuchAlgorithmException {
-        
         /**
          * Testing user creation with an empty password
          * Response should contain BAD_REQUEST with the appropriate failed message.
          */
         var response = userService.createUser(badTestUserMap);
-        
+
         Map<String, String> emptyPasswordMessage = new HashMap<>();
         emptyPasswordMessage.put("message", "User passed an empty password.");
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(emptyPasswordMessage, response.getBody());
-        
+
         /**
          * Testing good user creation
          * Response should contain CREATED with the appropriate success message.
          */
         response = userService.createUser(commonTestUserMap);
-        
+
         Map<String, String> successMessage = new HashMap<>();
         successMessage.put("message", "User created successfully.");
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(successMessage, response.getBody());
-        
+
         /**
          * Testing user creation when the email already exists
          * Response should contain BAD_REQUEST with the appropriate failed message.
@@ -93,7 +92,7 @@ public class UserServiceTester {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(alreadyExistsMessage, response.getBody());
     }
-    
+
     @Test
     public void testLogin() throws NoSuchAlgorithmException {
         /**
@@ -119,7 +118,7 @@ public class UserServiceTester {
         assertEquals(commonTestEmail, userLogin.getEmail());
         assertEquals(LocalDate.now(), userLogin.getDateJoined());
         assertNotEquals(null, userLogin.getGuid());
-        
+
         /**
          * Testing login with correct email and wrong password
          */
