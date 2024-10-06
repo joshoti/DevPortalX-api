@@ -1,6 +1,5 @@
 package com.devportalx.user;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -47,10 +46,7 @@ public class UserService {
             message.put("message", UserMessage.INVALID_PASSWORD);
             return new ResponseEntity<Map<String, String>>(message, HttpStatus.BAD_REQUEST);
         }
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hashedPassword = digest.digest(newUser.get("password").getBytes(StandardCharsets.UTF_8));
-
-        User user = new User(newUser.get("email"), hashedPassword);
+        User user = new User(newUser.get("email"), newUser.get("password"));
         userRepository.save(user);
 
         message.put("message", UserMessage.USER_CREATED_SUCCESS);
@@ -65,7 +61,7 @@ public class UserService {
      */
     public User getUserByGuid(UUID userGuid) {
         User userByGuid = userRepository.findUserByGuid(userGuid)
-                .orElseThrow(() -> new IllegalStateException("User not found"));
+                .orElseThrow(() -> new IllegalStateException(UserMessage.USER_NOT_FOUND));
 
         return userByGuid;
     }
@@ -75,7 +71,7 @@ public class UserService {
     }
 
     /**
-     * Logs in a user and returns info for dashboard.
+     * Logs in a user and returns user info.
      * 
      * @param loginData consisting of email and password
      * @return User
@@ -84,10 +80,7 @@ public class UserService {
         User userByEmail = userRepository.findUserByEmail(loginData.get("email"))
                 .orElseThrow(() -> new IllegalStateException(UserMessage.INCORRECT_USERNAME_OR_PASSWORD));
 
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] hashedPassword = digest.digest(loginData.get("password").getBytes(StandardCharsets.UTF_8));
-
-        if (!MessageDigest.isEqual(userByEmail.getPassword(), hashedPassword)) {
+        if (!MessageDigest.isEqual(userByEmail.getPassword(), User.getHashedDigest(loginData.get("password")))) {
             throw new IllegalStateException(UserMessage.INCORRECT_USERNAME_OR_PASSWORD);
         }
 
