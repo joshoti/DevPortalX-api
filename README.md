@@ -32,10 +32,11 @@ cd DevPortalX-api
 2. Configure application properties:
 Edit the `src/main/resources/application.properties` file:
 ```bash
-spring.jpa.database=H2
+spring.datasource.url=jdbc:h2:mem:devportalxdb;NON_KEYWORDS=user
 spring.jpa.hibernate.ddl-auto=create-drop
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
+spring.h2.console.enabled=true
 server.error.include-message=always
 ```
 
