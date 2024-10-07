@@ -1,18 +1,15 @@
 package com.devportalx.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,7 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 @SpringBootTest
 public class UserServiceTester {
 
@@ -33,7 +32,6 @@ public class UserServiceTester {
     private static User commonTestUser;
     private static String commonTestEmail;
     private static String commonTestPassword;
-    private static byte[] hashedPassword;
 
     private static Map<String, String> badTestUserMap;
     private static Map<String, String> commonTestUserMap;
@@ -52,10 +50,7 @@ public class UserServiceTester {
         badTestUserMap.put("email", commonTestEmail);
         badTestUserMap.put("password", "");
 
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        hashedPassword = digest.digest(commonTestPassword.getBytes(StandardCharsets.UTF_8));
-
-        commonTestUser = new User(commonTestEmail, hashedPassword);
+        commonTestUser = new User(commonTestEmail, commonTestPassword);
     }
 
     @Test
@@ -67,7 +62,7 @@ public class UserServiceTester {
         var response = userService.createUser(badTestUserMap);
 
         Map<String, String> emptyPasswordMessage = new HashMap<>();
-        emptyPasswordMessage.put("message", "User passed an empty password.");
+        emptyPasswordMessage.put("message", UserMessage.INVALID_PASSWORD);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(emptyPasswordMessage, response.getBody());
 
@@ -78,17 +73,19 @@ public class UserServiceTester {
         response = userService.createUser(commonTestUserMap);
 
         Map<String, String> successMessage = new HashMap<>();
-        successMessage.put("message", "User created successfully.");
+        successMessage.put("message", UserMessage.USER_CREATED_SUCCESS);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(successMessage, response.getBody());
 
         /**
          * Testing user creation when the email already exists
          * Response should contain BAD_REQUEST with the appropriate failed message.
+         * 
+         * TO BE FIXED: DB NOT PERSISTING
          */
         response = userService.createUser(commonTestUserMap);
         Map<String, String> alreadyExistsMessage = new HashMap<>();
-        alreadyExistsMessage.put("message", "User created successfully.");
+        alreadyExistsMessage.put("message", UserMessage.USER_ALREADY_EXISTS);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(alreadyExistsMessage, response.getBody());
     }
@@ -102,7 +99,7 @@ public class UserServiceTester {
         try {
             userService.login(commonTestUserMap);
         } catch (Exception e) {
-            assertEquals("Username or password is incorrect", e.getMessage());
+            assertEquals(UserMessage.INCORRECT_USERNAME_OR_PASSWORD, e.getMessage());
             loginSucceeded = false;
         } finally {
             assertEquals(false, loginSucceeded);
@@ -110,14 +107,16 @@ public class UserServiceTester {
 
         /**
          * Testing login when user exists in db
-         * TO BE FIXED: db not persisting. user0 is null
+         * 
+         * TO BE FIXED: db not persisting. savedUser is null
          */
-        User user0 = userRepository.save(commonTestUser);
+        User savedUser = userRepository.save(commonTestUser);
+        assertNotNull(savedUser);
         User userLogin = userService.login(commonTestUserMap);
 
         assertEquals(commonTestEmail, userLogin.getEmail());
         assertEquals(LocalDate.now(), userLogin.getDateJoined());
-        assertNotEquals(null, userLogin.getGuid());
+        assertNotNull(userLogin.getGuid());
 
         /**
          * Testing login with correct email and wrong password
@@ -127,7 +126,7 @@ public class UserServiceTester {
         try {
             userService.login(badTestUserMap);
         } catch (Exception e) {
-            assertEquals("Username or password is incorrect", e.getMessage());
+            assertEquals(UserMessage.INCORRECT_USERNAME_OR_PASSWORD, e.getMessage());
             loginSucceeded = false;
         } finally {
             assertEquals(false, loginSucceeded);
@@ -135,14 +134,23 @@ public class UserServiceTester {
     }
 
     @Test
-    public void testGetUserByGuid() {
-        // User user = new User(1L, "John Doe");
-        // when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-
-        // User foundUser = userService.getUserById(1L);
-
-        // assertEquals("John Doe", foundUser.getName());
-        // verify(userRepository, times(1)).findById(1L);
+    public void testGetUserByGuid() throws NoSuchAlgorithmException {
+        /**
+         * Getting a user that is not in DB. Search result should be empty
+         */
+        Optional<User> userByGuid = userRepository.findUserByGuid(UUID.randomUUID());
+        assertTrue(userByGuid.isEmpty());
+        
+        /**
+         * Testing getting a user in DB
+         * 
+         * TO BE FIXED: db not persisting. savedUser is null
+         */
+        User savedUser = userRepository.save(commonTestUser);
+        assertNotNull(savedUser);
+        
+        userByGuid = userRepository.findUserByGuid(savedUser.getGuid());
+        assertTrue(userByGuid.isPresent());
     }
 
 }
