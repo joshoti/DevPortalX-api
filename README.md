@@ -1,7 +1,7 @@
 # DevPortalX-api
 A centralized developer portal providing APIs, resources, and tools for seamless integration with our platform. DevPortalX enables developers to connect their apps, manage integrations, and explore documentation in one place.
 
-- See frontend Repository [here](https://github.com/joshoti/DevPortalX)
+- See React frontend [here](https://github.com/joshoti/DevPortalX)
 
 - See [Spring Boot Reference Guide](https://docs.spring.io/spring-boot/docs/1.1.0.M1/reference/html/index.html) for more info.
 
@@ -40,6 +40,11 @@ spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 spring.h2.console.enabled=true
 server.error.include-message=always
+```
+2.1. If you would like to have a persistent database storage, update the first two settings above to the below:
+```bash
+spring.datasource.url=jdbc:h2:file:./data/devportalxdb;NON_KEYWORDS=user
+spring.jpa.hibernate.ddl-auto=update
 ```
 
 3. Build and run the application:
