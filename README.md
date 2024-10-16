@@ -3,11 +3,12 @@ A centralized developer portal providing APIs, resources, and tools for seamless
 
 - See React frontend [here](https://github.com/joshoti/DevPortalX)
 
-- See [Spring Boot Reference Guide](https://docs.spring.io/spring-boot/docs/1.1.0.M1/reference/html/index.html) for more info.
+- See Spring Boot References [[1]](https://spring.io/projects), [[2]](https://docs.spring.io/spring-boot/docs/1.1.0.M1/reference/html/index.html) for more info.
 
 ## API Documentation
-After starting the application, access the Swagger API documentation at:
-http://localhost:8080/swagger-ui/
+After starting the application, access the Swagger API documentation at: http://localhost:8080/swagger-ui.html
+
+API Doc References: [[1]](https://springdoc.org/#demos), [[2]](https://github.com/springdoc/springdoc-openapi-demos/blob/master/demo-spring-boot-3-webmvc/src/main/java/org/springdoc/demo/app2/api/UserApi.java), [[3]](https://demos.springdoc.org/demo-spring-boot-3-webmvc/swagger-ui/index.html#/user/loginUser)
 
 ## Features
 - API Documentation and Key Management
@@ -54,7 +55,7 @@ mvn spring-boot:run
 ```
 
 4. Access the application:
-The application should now be running at `http://localhost:8080`.
+The application should now be running at `http://localhost:8080`. Go to `http://localhost:8080/swagger-ui.html` to get started.
 
 
 ## Contributing
