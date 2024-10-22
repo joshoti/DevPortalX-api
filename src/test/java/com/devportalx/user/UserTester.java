@@ -37,8 +37,8 @@ public class UserTester {
          */
         User user = new User(commonTestEmail, commonTestPassword);
         assertEquals(commonTestEmail, user.getEmail());
-        assertNotEquals(commonTestPassword, user.getPassword());
-        assertTrue(MessageDigest.isEqual(User.getHashedDigest(commonTestPassword), user.getPassword()));
+        assertNotEquals(commonTestPassword, user.getUserPassword());
+        assertTrue(MessageDigest.isEqual(User.getHashedDigest(commonTestPassword), user.getUserPassword()));
         assertNotNull(user.getDateJoined());
         assertNotNull(user.getGuid());
 
@@ -52,15 +52,15 @@ public class UserTester {
          * Ensuring that invalid passwords don't get set
          */
         user.setPassword("");
-        assertNotEquals("", user.getPassword());
-        assertFalse(MessageDigest.isEqual(User.getHashedDigest(""), user.getPassword()));
+        assertNotEquals("", user.getUserPassword());
+        assertFalse(MessageDigest.isEqual(User.getHashedDigest(""), user.getUserPassword()));
 
         /**
          * Ensuring the valid passwords get hashed and set
          */
         user.setPassword("newPassword");
-        assertNotEquals("newPassword", user.getPassword());
-        assertTrue(MessageDigest.isEqual(User.getHashedDigest("newPassword"), user.getPassword()));
+        assertNotEquals("newPassword", user.getUserPassword());
+        assertTrue(MessageDigest.isEqual(User.getHashedDigest("newPassword"), user.getUserPassword()));
     }
 
 }

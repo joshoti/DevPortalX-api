@@ -1,10 +1,15 @@
 package com.devportalx.user;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.UUID;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -25,6 +30,7 @@ public class User {
     @JsonIgnore
     private byte[] password;
     private UUID guid;
+    @JsonIgnore
     private LocalDate dateJoined;
 
     public User() {
@@ -65,7 +71,7 @@ public class User {
         this.email = email;
     }
 
-    public byte[] getPassword() {
+    public byte[] getUserPassword() {
         return password;
     }
 
@@ -112,5 +118,21 @@ public class User {
     public String toString() {
         return "User {" + email + "}";
     }
+
+    // @Override
+    // public Collection<? extends GrantedAuthority> getAuthorities() {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'getAuthorities'");
+    // }
+
+    // @Override
+    // public String getPassword() {
+    //     return "";
+    // }
+
+    // @Override
+    // public String getUsername() {
+    //     return getEmail();
+    // }
 
 }

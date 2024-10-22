@@ -80,10 +80,14 @@ public class UserService {
         User userByEmail = userRepository.findUserByEmail(loginData.get("email"))
                 .orElseThrow(() -> new IllegalStateException(UserMessage.INCORRECT_USERNAME_OR_PASSWORD));
 
-        if (!MessageDigest.isEqual(userByEmail.getPassword(), User.getHashedDigest(loginData.get("password")))) {
+        if (!MessageDigest.isEqual(userByEmail.getUserPassword(), User.getHashedDigest(loginData.get("password")))) {
             throw new IllegalStateException(UserMessage.INCORRECT_USERNAME_OR_PASSWORD);
         }
 
         return userByEmail;
+    }
+
+    public void logout(String refreshToken) {
+        //Delete tokens from DB
     }
 }
