@@ -14,8 +14,7 @@ public class CsrfController {
 
     @GetMapping
     public CsrfToken getCsrfToken(CsrfToken token) {
-        return token; // Return the token to the frontend.
+        return token;
     }
-
 }
 
