@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Hidden;
@@ -76,8 +78,8 @@ public class UserController {
     }
 
     @Operation(
-        description = "Login in a developer.",
-        summary = "Login in a developer.",
+        description = "Login a developer.",
+        summary = "Login a developer.",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(examples = {
                 @ExampleObject(value="{\"email\": \"someEmail\", \"password\": \"somePassword\"}")}
@@ -91,6 +93,25 @@ public class UserController {
     public User login(@RequestBody Map<String, String> loginData)
             throws NoSuchAlgorithmException {
         return userService.login(loginData);
+    }
+
+    @Operation(
+        description = "Logout developer.",
+        summary = "Logout developer.",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(examples = {
+                @ExampleObject(value="{}")}
+            )
+        ),
+        responses = {
+            @ApiResponse(responseCode = "204"),
+        }
+    )
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(path = "logout")
+    public void logout(@RequestBody String refreshToken) {
+        // Take in the refresh token
+        userService.logout(refreshToken);
     }
 
 }
